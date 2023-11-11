@@ -1,8 +1,10 @@
 import itertools
 import torch
 import numpy as np
+import pandas as pd    
 from torch.utils.data import DataLoader
 from datasets import load_dataset
+from utils import remove_examples_by_qid
 from vqa_dataset import VQADataset
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering, DefaultDataCollator
 from PIL import Image
@@ -15,21 +17,23 @@ else:
 
 verbose = True
 
-dataset = load_dataset("HuggingFaceM4/VQAv2", split='train')# 'train[0:300]')
+dataset = load_dataset("HuggingFaceM4/VQAv2", split='train')
+
+# load ambiguity dataset
+# jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
+ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train')
+
+dataset = remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
 
 # uses vilt config to check vocab
 config = ViltConfig.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
 
-print(dataset[0])
-image = Image.open(dataset[0]['image'].filename)
+if verbose:
+    print(dataset[0])
+    image = Image.open(dataset[0]['image'].filename)
 
-# dataset = dataset.remove_columns(['question_type', 'question_id', 'answer_type'])
 
-# unique_labels = list(set(labels))
-
-# label2id = {label: idx for idx, label in enumerate(unique_labels)}
-# id2label = {idx: label for label, idx in label2id.items()} 
-
+# vocab selection found here: https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/ViLT/Using_ViLT_for_image_text_retrieval.ipynb#scrollTo=4qC5r7ZEUAcr
 def get_score(count: int) -> float:
     return min(1.0, count / 3)
 
@@ -56,6 +60,7 @@ for annotation in tqdm(dataset):
 
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
 
+# Torch Dataset
 dataset = VQADataset(questions=dataset['question'],
                      annotations=annotations_labelled,
                      processor=processor,
