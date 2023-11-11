@@ -1,4 +1,5 @@
 import os
+import tqdm
 from datasets import load_dataset, Dataset, load_from_disk
 from transformers import ViltConfig
 from PIL import Image
@@ -12,7 +13,9 @@ class ViltFinetuneDataLoader(object):
     def from_saved_or_load(config=None, verbose=False, force_reload=False, save_dir='saved_datasets/'):
         if not force_reload:
             if os.path.exists(save_dir):
+                print('loading dataset from disk...')
                 reloaded_encoded_dataset = load_from_disk(save_dir)
+                print('loaded dataset from disk')
                 return reloaded_encoded_dataset
             else:
                 print(f'Cannot find saved datasets directory at: {save_dir}')
@@ -22,7 +25,7 @@ class ViltFinetuneDataLoader(object):
         print('loaded hugginface dataset')
         # load ambiguity dataset
         # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
-        ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train')
+        ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train[0:1000]')
 
         dataset = loader.remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
 

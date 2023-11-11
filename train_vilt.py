@@ -64,7 +64,7 @@ def collate_fn(batch):
 
     return batch
 
-train_dataloader = DataLoader(dataset, collate_fn=collate_fn, batch_size=4, shuffle=True)
+train_dataloader = DataLoader(dataset, collate_fn=collate_fn, batch_size=30, shuffle=True)
 
 # Visualize batch and decode random examples
 if verbose:
@@ -109,4 +109,5 @@ for epoch in range(50):  # loop over the dataset multiple times
             loss.backward()
             optimizer.step()
 
+    model.save_pretrained('saved_models/')
 pass
