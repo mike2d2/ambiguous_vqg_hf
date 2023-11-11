@@ -17,7 +17,7 @@ else:
 
 verbose = True
 
-dataset = load_dataset("HuggingFaceM4/VQAv2", split='train')
+dataset = load_dataset("HuggingFaceM4/VQAv2", split='train[0:1000]')
 
 # load ambiguity dataset
 # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
