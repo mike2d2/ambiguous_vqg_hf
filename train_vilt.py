@@ -4,69 +4,27 @@ import os
 import numpy as np
 import pandas as pd    
 from torch.utils.data import DataLoader
-from datasets import load_dataset, Dataset
-from utils import remove_examples_by_qid
-from vqa_dataset import VQADataset
+from data.vilt_finetune_data_loader import ViltFinetuneDataLoader
+from data.vqa_dataset import VQADataset
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering, DefaultDataCollator
 from PIL import Image
 from tqdm.auto import tqdm
-# os.environ['TRANSFORMERS_CACHE'] = "/scratch2/madefran/hf_cache"
+
 saved_dataset_dir = 'saved_datasets/'
+
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = torch.device('cpu')
 print(device)
-verbose = True
+verbose = False
 
-dataset = load_dataset("HuggingFaceM4/VQAv2", split='train[0:1000]')
-print('loaded hugginface dataset')
-# load ambiguity dataset
-# jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
-ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train')
-
-dataset = remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
 
 # uses vilt config to check vocab
 config = ViltConfig.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-
-if verbose:
-    print(dataset[0])
-    image = Image.open(dataset[0]['image'].filename)
-
-
-# vocab selection found here: https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/ViLT/Using_ViLT_for_image_text_retrieval.ipynb#scrollTo=4qC5r7ZEUAcr
-def get_score(count: int) -> float:
-    return min(1.0, count / 3)
-
-
-def add_labels(example):
-    annotation = example
-    answers = annotation['answers']
-    answer_count = {}
-    for answer in answers:
-        answer_ = answer["answer"]
-        answer_count[answer_] = answer_count.get(answer_, 0) + 1
-    labels = []
-    scores = []
-    for answer in answer_count:
-        if answer not in list(config.label2id.keys()):
-            continue
-        labels.append(config.label2id[answer])
-        score = get_score(answer_count[answer])
-        scores.append(score)
-    annotation['labels'] = labels
-    annotation['scores'] = scores
-    return example
-
-
-dataset = dataset.map(add_labels)
+dataset = ViltFinetuneDataLoader.from_saved_or_load(config=config, verbose=verbose, force_reload=False, save_dir=saved_dataset_dir)
 
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
-
-# Torch Dataset
-
-dataset.save_to_disk(saved_dataset_dir)
 dataset = VQADataset(questions=dataset['question'],
                      dataset=dataset,
                      processor=processor,
@@ -85,27 +43,26 @@ model.to(device)
 
 # combines features into concatenations
 # data_collator = DefaultDataCollator()
-
 def collate_fn(batch):
-  input_ids = [item['input_ids'] for item in batch]
-  pixel_values = [item['pixel_values'] for item in batch]
-  attention_mask = [item['attention_mask'] for item in batch]
-  token_type_ids = [item['token_type_ids'] for item in batch]
-  labels = [item['labels'] for item in batch]
+    input_ids = [item['input_ids'] for item in batch]
+    pixel_values = [item['pixel_values'] for item in batch]
+    attention_mask = [item['attention_mask'] for item in batch]
+    token_type_ids = [item['token_type_ids'] for item in batch]
+    labels = [item['labels'] for item in batch]
 
-  # create padded pixel values and corresponding pixel mask
-  encoding = processor.image_processor.pad(pixel_values, return_tensors="pt")
+    # create padded pixel values and corresponding pixel mask
+    encoding = processor.image_processor.pad(pixel_values, return_tensors="pt")
 
-  # create new batch
-  batch = {}
-  batch['input_ids'] = torch.stack(input_ids)
-  batch['attention_mask'] = torch.stack(attention_mask)
-  batch['token_type_ids'] = torch.stack(token_type_ids)
-  batch['pixel_values'] = encoding['pixel_values']
-  batch['pixel_mask'] = encoding['pixel_mask']
-  batch['labels'] = torch.stack(labels)
+    # create new batch
+    batch = {}
+    batch['input_ids'] = torch.stack(input_ids)
+    batch['attention_mask'] = torch.stack(attention_mask)
+    batch['token_type_ids'] = torch.stack(token_type_ids)
+    batch['pixel_values'] = encoding['pixel_values']
+    batch['pixel_mask'] = encoding['pixel_mask']
+    batch['labels'] = torch.stack(labels)
 
-  return batch
+    return batch
 
 train_dataloader = DataLoader(dataset, collate_fn=collate_fn, batch_size=4, shuffle=True)
 
@@ -146,7 +103,9 @@ for epoch in range(50):  # loop over the dataset multiple times
             # forward + backward + optimize
             outputs = model(**batch)
             loss = outputs.loss
-            print("Loss:", loss.item())
+
+            if verbose:
+                print("Loss:", loss.item())
             loss.backward()
             optimizer.step()
 
