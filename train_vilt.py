@@ -1,24 +1,26 @@
 import itertools
 import torch
+import os
 import numpy as np
 import pandas as pd    
 from torch.utils.data import DataLoader
-from datasets import load_dataset
+from datasets import load_dataset, Dataset
 from utils import remove_examples_by_qid
 from vqa_dataset import VQADataset
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering, DefaultDataCollator
 from PIL import Image
 from tqdm.auto import tqdm
-
+os.environ['TRANSFORMERS_CACHE'] = "/scratch2/madefran/hf_cache"
+saved_dataset_dir = 'saved_datasets/'
 if torch.cuda.is_available():
     device = torch.device('cuda')
 else:
     device = torch.device('cpu')
-
+print(device)
 verbose = True
 
 dataset = load_dataset("HuggingFaceM4/VQAv2", split='train[0:1000]')
-
+print('loaded hugginface dataset')
 # load ambiguity dataset
 # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
 ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train')
@@ -56,8 +58,11 @@ for annotation in tqdm(dataset):
     annotation['labels'] = labels
     annotation['scores'] = scores
     annotations_labelled.append(annotation)
-
-
+print(dataset[0])
+labelled_dataset = Dataset.from_pandas(pd.DataFrame(data=annotations_labelled))
+# annotations_labelled.remove_columns('image')
+dataset.add_column('annotations_labelled', annotations_labelled)
+print(dataset[0])
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
 
 # Torch Dataset
@@ -65,9 +70,8 @@ dataset = VQADataset(questions=dataset['question'],
                      annotations=annotations_labelled,
                      processor=processor,
                      config=config)
-
+dataset.save_to_disk(dataset_save_dir)
 if verbose:
-    print(dataset[0].keys())
     print(processor.decode(dataset[0]['input_ids']))
 
 #labels = torch.nonzero(dataset[0]['labels']).squeeze().tolist()
