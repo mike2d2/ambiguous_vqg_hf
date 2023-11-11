@@ -4,20 +4,20 @@ from PIL import Image
 class VQADataset(torch.utils.data.Dataset):
     """VQA (v2) dataset."""
 
-    def __init__(self, questions, annotations, processor, config):
+    def __init__(self, questions, dataset, processor, config):
         self.questions = questions
-        self.annotations = annotations
+        self.dataset = dataset
         self.processor = processor
 
         # config steals vocab from another pretrained on vqa vilt model
         self.config = config
 
     def __len__(self):
-        return len(self.annotations)
+        return len(self.dataset)
 
     def __getitem__(self, idx):
         # get image + text
-        annotation = self.annotations[idx]
+        annotation = self.dataset[idx]
         question = self.questions[idx]
         # image = Image.open(id_to_filename[annotation['image_id']])
         image = annotation['image']

@@ -10,7 +10,7 @@ from vqa_dataset import VQADataset
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering, DefaultDataCollator
 from PIL import Image
 from tqdm.auto import tqdm
-os.environ['TRANSFORMERS_CACHE'] = "/scratch2/madefran/hf_cache"
+# os.environ['TRANSFORMERS_CACHE'] = "/scratch2/madefran/hf_cache"
 saved_dataset_dir = 'saved_datasets/'
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -39,9 +39,9 @@ if verbose:
 def get_score(count: int) -> float:
     return min(1.0, count / 3)
 
-annotations_labelled = []
 
-for annotation in tqdm(dataset):
+def add_labels(example):
+    annotation = example
     answers = annotation['answers']
     answer_count = {}
     for answer in answers:
@@ -57,20 +57,20 @@ for annotation in tqdm(dataset):
         scores.append(score)
     annotation['labels'] = labels
     annotation['scores'] = scores
-    annotations_labelled.append(annotation)
-print(dataset[0])
-labelled_dataset = Dataset.from_pandas(pd.DataFrame(data=annotations_labelled))
-# annotations_labelled.remove_columns('image')
-dataset.add_column('annotations_labelled', annotations_labelled)
-print(dataset[0])
+    return example
+
+
+dataset = dataset.map(add_labels)
+
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
 
 # Torch Dataset
+
+dataset.save_to_disk(saved_dataset_dir)
 dataset = VQADataset(questions=dataset['question'],
-                     annotations=annotations_labelled,
+                     dataset=dataset,
                      processor=processor,
                      config=config)
-dataset.save_to_disk(dataset_save_dir)
 if verbose:
     print(processor.decode(dataset[0]['input_ids']))
 

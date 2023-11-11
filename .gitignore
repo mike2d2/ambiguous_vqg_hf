@@ -3,6 +3,8 @@ __pycache__/
 throwaway/
 vqav2_data/
 .DS_Store
+saved_datasets/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
