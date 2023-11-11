@@ -1,0 +1,5 @@
+.vscode/
+__pycache__/
+throwaway/
+vqav2_data/
+.DS_Store
