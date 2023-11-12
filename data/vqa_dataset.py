@@ -24,7 +24,7 @@ class VQADataset(torch.utils.data.Dataset):
         text = question
 
         if(image.mode != 'RGB'):
-            print('gray')
+            # print('gray')
             image = image.convert('RGB')
         # elif len(image.shape)==3:
         #     print('Color(RGB)')

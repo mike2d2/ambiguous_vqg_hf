@@ -26,7 +26,8 @@ class ViltFinetuneDataLoader(object):
         # load ambiguity dataset
         # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
         ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train[0:1000]')
-
+        
+        # Remove examples from ambiguous dataset
         dataset = loader.remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
 
         if verbose:
