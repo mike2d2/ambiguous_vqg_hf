@@ -22,7 +22,7 @@ verbose = False
 
 # uses vilt config to check vocab
 config = ViltConfig.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-dataset = ViltFinetuneDataLoader.from_saved_or_load(config=config, verbose=verbose, force_reload=True, save_dir=saved_dataset_dir)
+dataset = ViltFinetuneDataLoader.from_saved_or_load(config=config, verbose=verbose, force_reload=False, save_dir=saved_dataset_dir)
 print(f'loaded dataset with {len(dataset)} examples')
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
 dataset = VQADataset(questions=dataset['question'],

@@ -69,3 +69,5 @@ probs, classes = torch.topk(predicted_classes, 5)
 
 for prob, class_idx in zip(probs.squeeze().tolist(), classes.squeeze().tolist()):
   print(prob, model.config.id2label[class_idx])
+
+
