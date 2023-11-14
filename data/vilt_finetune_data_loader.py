@@ -1,5 +1,5 @@
 import os
-import tqdm
+from tqdm import tqdm
 from datasets import load_dataset, Dataset, load_from_disk
 from transformers import ViltConfig
 from PIL import Image
@@ -10,23 +10,34 @@ class ViltFinetuneDataLoader(object):
         pass
 
     @staticmethod
-    def from_saved_or_load(config=None, verbose=False, force_reload=False, save_dir='saved_datasets/'):
+    def from_saved_or_load(config=None, verbose=False, force_reload=False, save_dir='saved_datasets/', truncate_len=None):
         if not force_reload:
             if os.path.exists(save_dir):
                 print('loading dataset from disk...')
                 reloaded_encoded_dataset = load_from_disk(save_dir)
-                print('loaded dataset from disk')
+                print(f'loaded dataset from disk with {len(reloaded_encoded_dataset)} examples')
                 return reloaded_encoded_dataset
             else:
                 print(f'Cannot find saved datasets directory at: {save_dir}')
 
         loader = ViltFinetuneDataLoader(config)
-        dataset = load_dataset("HuggingFaceM4/VQAv2", split='train')
-        print('loaded hugginface dataset')
+
+        if truncate_len is None:
+            dataset = load_dataset("HuggingFaceM4/VQAv2", split='train')
+        else:
+            dataset = load_dataset("HuggingFaceM4/VQAv2", split=f'train[0:{truncate_len}]')
+
+        print(f'loaded hugginface dataset with {len(dataset)} examples')
         # load ambiguity dataset
         # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
         ambiguous_vqa_dataset = load_dataset('json', data_files=f'datasets/combined_dev_test_from_dataset.json', split='train')
         
+        # find first example
+        q_id_check = ambiguous_vqa_dataset[0]['Input.question_id']
+        for q in tqdm(dataset):
+            if q_id_check == q['question_id']:
+                print('found')
+
         # Remove examples from ambiguous dataset
         dataset = loader.remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
 

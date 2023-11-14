@@ -91,7 +91,7 @@ if verbose:
 optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
 
 model.train()
-for epoch in range(50):  # loop over the dataset multiple times
+for epoch in range(50): 
     print(f"Epoch: {epoch}")
     for batch in tqdm(train_dataloader):
             # get the inputs;
