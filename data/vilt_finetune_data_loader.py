@@ -33,10 +33,10 @@ class ViltFinetuneDataLoader(object):
         ambiguous_vqa_dataset = load_dataset('json', data_files=f'datasets/combined_dev_test_from_dataset.json', split='train')
         
         # find first example
-        q_id_check = ambiguous_vqa_dataset[0]['Input.question_id']
-        for q in tqdm(dataset):
-            if q_id_check == q['question_id']:
-                print('found')
+        # q_id_check = ambiguous_vqa_dataset[0]['Input.question_id']
+        # for q in tqdm(dataset):
+        #     if q_id_check == q['question_id']:
+        #         print('found')
 
         # Remove examples from ambiguous dataset
         dataset = loader.remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
@@ -75,7 +75,7 @@ class ViltFinetuneDataLoader(object):
 
     def remove_examples_by_qid(self, from_dataset, remove_dataset):
         print(f"Removing {len(remove_dataset)} items from {from_dataset.builder_name}...")
-        matching_examples = from_dataset.filter(lambda example: str(example["question_id"]) not in remove_dataset["Input.question_id"])
+        matching_examples = from_dataset.filter(lambda example: example["question_id"] not in remove_dataset["Input.question_id"])
         
         print(f'Dataset now of size: {len(matching_examples)}')
         return matching_examples
