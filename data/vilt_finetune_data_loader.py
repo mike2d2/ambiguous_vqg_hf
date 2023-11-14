@@ -25,7 +25,7 @@ class ViltFinetuneDataLoader(object):
         print('loaded hugginface dataset')
         # load ambiguity dataset
         # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
-        ambiguous_vqa_dataset = load_dataset('json', data_files=f'ambiguous_vqa/data/cleaned_data.jsonl', split='train[0:1000]')
+        ambiguous_vqa_dataset = load_dataset('json', data_files=f'datasets/combined_dev_test_from_dataset.json', split='train')
         
         # Remove examples from ambiguous dataset
         dataset = loader.remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
@@ -64,7 +64,7 @@ class ViltFinetuneDataLoader(object):
 
     def remove_examples_by_qid(self, from_dataset, remove_dataset):
         print(f"Removing {len(remove_dataset)} items from {from_dataset.builder_name}...")
-        matching_examples = from_dataset.filter(lambda example: str(example["question_id"]) not in remove_dataset["question_id"])
+        matching_examples = from_dataset.filter(lambda example: str(example["question_id"]) not in remove_dataset["Input.question_id"])
         
         print(f'Dataset now of size: {len(matching_examples)}')
         return matching_examples
