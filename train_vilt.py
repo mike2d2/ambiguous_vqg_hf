@@ -4,6 +4,7 @@ import os
 import numpy as np
 import pandas as pd    
 from torch.utils.data import DataLoader
+from torch.nn.parallel import DataParallel
 from data.vilt_finetune_data_loader import ViltFinetuneDataLoader
 from data.vqa_dataset import VQADataset
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering, DefaultDataCollator
@@ -22,7 +23,7 @@ verbose = False
 
 # uses vilt config to check vocab
 config = ViltConfig.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-dataset = ViltFinetuneDataLoader.from_saved_or_load(config=config, verbose=verbose, force_reload=True, save_dir=saved_dataset_dir)
+dataset = ViltFinetuneDataLoader.from_saved_or_load(config=config, verbose=verbose, force_reload=False, save_dir=saved_dataset_dir)
 print(f'loaded dataset with {len(dataset)} examples')
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
 dataset = VQADataset(questions=dataset['question'],
@@ -39,6 +40,8 @@ model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-mlm",
                                                  id2label=config.id2label,
                                                  label2id=config.label2id)
 
+device_ids = [0, 1]
+model = DataParallel(model, device_ids=device_ids)
 model.to(device)
 
 # combines features into concatenations

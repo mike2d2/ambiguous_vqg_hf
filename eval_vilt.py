@@ -1,4 +1,5 @@
 import torch
+from tqdm import tqdm
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering
 
 from data.vilt_finetune_data_loader import ViltFinetuneDataLoader
@@ -17,7 +18,13 @@ print(device)
 verbose = False
 
 config = ViltConfig.from_pretrained("dandelin/vilt-b32-finetuned-vqa")
-dataset = ViltFinetuneDataLoader.from_saved_or_load(config=config, verbose=verbose, force_reload=True, save_dir=saved_dataset_dir, truncate_len=10)
+dataset = ViltFinetuneDataLoader.from_saved_or_load(
+    config=config,
+    verbose=verbose, 
+    force_reload=False, 
+    save_dir=saved_dataset_dir, 
+    truncate_len=None)
+
 processor = ViltProcessor.from_pretrained("dandelin/vilt-b32-mlm")
 dataset = VQADataset(questions=dataset['question'],
                      dataset=dataset,
@@ -29,6 +36,7 @@ model = ViltForQuestionAnswering.from_pretrained(saved_model_dir, local_files_on
                                                  label2id=config.label2id)
 
 model.to(device)
+model.eval()
 
 def collate_fn(batch):
     input_ids = [item['input_ids'] for item in batch]
@@ -69,3 +77,27 @@ probs, classes = torch.topk(predicted_classes, 5)
 
 for prob, class_idx in zip(probs.squeeze().tolist(), classes.squeeze().tolist()):
   print(prob, model.config.id2label[class_idx])
+
+correct = 0
+with torch.no_grad():
+    for batch in tqdm(train_dataloader):
+
+        inputs = batch['input_ids'].to(device)  # Assuming 'input_ids' is a key in your dataset
+        labels = batch['labels'].to(device)
+
+        # forward pass
+        outputs = model(**batch)
+        _, predicted = torch.max(outputs.logits, 1)
+        _, label_ids = torch.max(labels, 1)
+        
+        correct += (predicted == label_ids).sum().item()
+
+accuracy = correct / len(dataset)
+
+
+
+
+
+
+
+
