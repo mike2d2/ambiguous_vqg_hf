@@ -17,8 +17,8 @@ import wandb
 enable_wandb = True
 if enable_wandb:
     wandb.login()
-    run_name = 'debug1'
-    wandb.init(project = 'vqg', name = 'debug1')
+    run_name = 'debug2'
+    wandb.init(project = 'vqg', name = run_name)
 
 saved_dataset_dir = 'saved_datasets/'
 
@@ -51,7 +51,7 @@ def collate_fn(x):
     questions = [item[1] for item in x]
     answers = [item[2] for item in x]
     return images, questions, answers
-train_dataloader = DataLoader(dataset,batch_size=64, collate_fn = collate_fn, shuffle=True)
+train_dataloader = DataLoader(dataset,batch_size=80, collate_fn = collate_fn, shuffle=True)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 

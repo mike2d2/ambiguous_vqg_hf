@@ -10,9 +10,6 @@ class VQGDataset(torch.utils.data.Dataset):
         self.questions = dataset['question']
         self.dataset = dataset
 
-        # config steals vocab from another pretrained on vqa vilt model
-        self.config = config
-
     def __len__(self):
         return len(self.dataset)
 
@@ -21,6 +18,9 @@ class VQGDataset(torch.utils.data.Dataset):
         image = item['image'].convert('RGB')
         question = self.questions[idx]
         answers = [answer['answer'] for answer in item['answers'] if answer['answer_confidence'] == 'yes' or answer['answer_confidence'] == 'maybe']
+        if len(answers) == 0:
+            # Choose another random idx
+            idx = random.randint(0, len(self.dataset)-1)
+            return self.__getitem__(idx)
         answer = random.choice(answers)
-
         return image, question, answer

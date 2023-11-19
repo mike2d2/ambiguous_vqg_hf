@@ -1,0 +1,212 @@
+{
+    "os": "Linux-3.10.0-1160.71.1.el7.x86_64-x86_64-with-glibc2.17",
+    "python": "3.8.18",
+    "heartbeatAt": "2023-11-19T11:21:55.014513",
+    "startedAt": "2023-11-19T11:21:50.746918",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "train_vt5.py",
+    "codePathLocal": "train_vt5.py",
+    "codePath": "train_vt5.py",
+    "git": {
+        "remote": "git@github.com:mike2d2/ambiguous_vqg_hf.git",
+        "commit": "3973c7ed3b0e0b4f1abc6659ab07cb96f31a5477"
+    },
+    "email": "dyang165@usc.edu",
+    "root": "/scratch1/dyang165/ambiguous_vqg_hf",
+    "host": "b11-10.hpc.usc.edu",
+    "username": "dyang165",
+    "executable": "/home1/dyang165/.conda/envs/cs662/bin/python",
+    "cpu_count": 32,
+    "cpu_count_logical": 32,
+    "cpu_freq": {
+        "current": 2994.3739999999975,
+        "min": 0.0,
+        "max": 0.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        },
+        {
+            "current": 2994.374,
+            "min": 0.0,
+            "max": 0.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 125.7059326171875,
+            "used": 3.1448326110839844
+        }
+    },
+    "gpu": "NVIDIA A40",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA A40",
+            "memory_total": 48305799168
+        },
+        {
+            "name": "NVIDIA A40",
+            "memory_total": 48305799168
+        }
+    ],
+    "memory": {
+        "total": 251.411865234375
+    }
+}

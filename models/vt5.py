@@ -41,7 +41,7 @@ class VT5(nn.Module):
         # Project outputs into right dimension
         x = self.embedding_proj(x)
 
-        targets = self.t5_processor(questions, padding=True, max_length=96, return_tensors='pt')['input_ids'].to(device)
+        targets = self.t5_processor(questions, padding=True, max_length=64, return_tensors='pt')['input_ids'].to(device)
         targets[targets == self.t5_processor.pad_token_id] = -100 # Remove padding from loss
         print(targets.shape)
 
