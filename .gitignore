@@ -1,3 +1,10 @@
+saved_dataset_val/
+saved_datasets/
+wandb/
+checkpoints/
+
+
+
 .vscode/
 __pycache__/
 throwaway/

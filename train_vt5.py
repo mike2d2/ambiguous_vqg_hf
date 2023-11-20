@@ -13,11 +13,13 @@ from PIL import Image
 from tqdm.auto import tqdm
 from nltk.translate.bleu_score import corpus_bleu
 import wandb
+import torch.nn as nn
 
 enable_wandb = True
+checkpoint = 'checkpoints/0.pt'
 if enable_wandb:
     wandb.login()
-    run_name = 'debug2'
+    run_name = 'real1'
     wandb.init(project = 'vqg', name = run_name)
 
 saved_dataset_dir = 'saved_datasets/'
@@ -40,7 +42,12 @@ dataset = VQGDataset(dataset, config)
 #vl_processor = ViltProcessor.from_pretrained('dandelin/vilt-b32-finetuned-vqa')
 #t5_processor = T5TokenizerFast.from_pretrained('t5-base')
 
-model = VT5()
+if checkpoint == None:
+    model = VT5()
+else:
+    model = torch.load(checkpoint)
+    if isinstance(model, nn.DataParallel):
+        model = model.module
 
 device_ids = [0]
 model = DataParallel(model, device_ids=device_ids)
