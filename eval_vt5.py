@@ -19,7 +19,7 @@ import random
 from utils import get_nps
 random.seed(101)
 
-model_path = './checkpoints/0.pt'
+model_path = './checkpoints/1.pt'
 saved_dataset_dir = 'saved_dataset_val/'
 add_disjunctive_constraints=True
 
@@ -77,14 +77,16 @@ with torch.no_grad():
             for question in questions:
                 constraints+=[get_nps(question)]
         outputs = model.generate(images, answers, force_toks = constraints)
+        #outputs = model.generate(images, answers, force_toks=None)
         texts = outputs['text']
         pred.extend(texts)
         gt.extend(questions)
         
         idx+=1
-        #if idx == 1:
-    #    break
+        if idx == 10:
+            break
 
+print(pred[:10], gt[:10])
 tokenizer = AutoTokenizer.from_pretrained('t5-base')
 
 def tokenize(sentence):
@@ -98,7 +100,7 @@ for candidate, reference in zip(pred, gt):
     candidate_tok = tokenize(candidate)
     reference_tok = tokenize(reference)
     print(reference_tok, candidate_tok)
-    references.append(reference_tok)
+    references.append([reference_tok])
     candidates.append(candidate_tok)
 
 weights = [(1, 0, 0, 0),

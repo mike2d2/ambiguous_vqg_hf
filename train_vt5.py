@@ -85,4 +85,4 @@ for epoch in range(50):
                 (1./2., 1./2., 0, 0),
                 (1./3., 1./3., 1./3., 0),
                 (1./4., 1./4., 1./4., 1./4.)]
-    torch.save(model,f'checkpoints/{epoch}.pt')
+    torch.save(model,f'checkpoints/{run_name}-{epoch}.pt')

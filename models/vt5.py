@@ -103,7 +103,7 @@ class VT5(nn.Module):
                 except ValueError:
                     # In the rare case that a word gets split into subwords and there are repeated subwords
                     # we will just ignore it    
-                    pred_dict = self.t5_model_full.generate(inputs_embeds = seq_slice, 
+                    pred_dict = self.t5_model.generate(inputs_embeds = seq_slice, 
                                                             num_beams=self.beam_size, 
                                                             force_words_ids = None,
                                                             output_hidden_states=True,
