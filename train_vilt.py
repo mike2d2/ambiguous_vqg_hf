@@ -12,6 +12,7 @@ from PIL import Image
 from tqdm.auto import tqdm
 
 saved_dataset_dir = 'saved_datasets/'
+saved_model_dir = 'saved_models/run_1/epoch_9'
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -36,12 +37,15 @@ if verbose:
 #labels = torch.nonzero(dataset[0]['labels']).squeeze().tolist()
 # print([config.id2label[label] for label in labels])
 
-model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-mlm",
+# model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-mlm",
+#                                                  id2label=config.id2label,
+#                                                  label2id=config.label2id)
+model = ViltForQuestionAnswering.from_pretrained(saved_model_dir, local_files_only=True,
                                                  id2label=config.id2label,
                                                  label2id=config.label2id)
 
-device_ids = [0, 1]
-model = DataParallel(model, device_ids=device_ids)
+# device_ids = [0, 1]
+# model = DataParallel(model, device_ids=device_ids)
 model.to(device)
 
 # combines features into concatenations
@@ -94,6 +98,7 @@ if verbose:
 optimizer = torch.optim.AdamW(model.parameters(), lr=5e-5)
 
 model.train()
+losses = []
 for epoch in range(50): 
     print(f"Epoch: {epoch}")
     for batch in tqdm(train_dataloader):
@@ -109,8 +114,10 @@ for epoch in range(50):
 
             if verbose:
                 print("Loss:", loss.item())
+                losses.append(loss.item())
             loss.backward()
             optimizer.step()
 
-    model.save_pretrained('saved_models/')
+    print(str(losses[-1]))
+    model.save_pretrained(f'saved_models/epoch_{str(epoch)}')
 pass
