@@ -1,7 +1,7 @@
 import os
 from tqdm import tqdm
 from datasets import load_dataset, Dataset, load_from_disk
-from transformers import ViltConfig
+from transformers import ViltConfig, AutoTokenizer
 from PIL import Image
 
 class ViltFinetuneDataLoader(object):
@@ -10,7 +10,8 @@ class ViltFinetuneDataLoader(object):
         pass
 
     @staticmethod
-    def from_saved_or_load(config=None, verbose=False, force_reload=False, save_dir='saved_datasets/', truncate_len=None):
+    def from_saved_or_load(split='train',config=None, verbose=False, force_reload=False, save_dir='saved_datasets/', truncate_len=None):
+        print(f"Split is {split}")
         if not force_reload:
             if os.path.exists(save_dir):
                 print('loading dataset from disk...')
@@ -19,15 +20,14 @@ class ViltFinetuneDataLoader(object):
                 return reloaded_encoded_dataset
             else:
                 print(f'Cannot find saved datasets directory at: {save_dir}')
-
         loader = ViltFinetuneDataLoader(config)
 
         if truncate_len is None:
-            dataset = load_dataset("HuggingFaceM4/VQAv2", split='train')
+            dataset = load_dataset("HuggingFaceM4/VQAv2", split=f'{split}')
         else:
-            dataset = load_dataset("HuggingFaceM4/VQAv2", split=f'train[0:{truncate_len}]')
-
-        print(f'loaded hugginface dataset with {len(dataset)} examples')
+            dataset = load_dataset("HuggingFaceM4/VQAv2", split=f'{split}[0:{truncate_len}]')
+        print('------------------------')
+        print(f'loaded huggingface dataset with {len(dataset)} examples')
         # load ambiguity dataset
         # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
         ambiguous_vqa_dataset = load_dataset('json', data_files=f'datasets/combined_dev_test_from_dataset.json', split='train')
@@ -39,8 +39,7 @@ class ViltFinetuneDataLoader(object):
         #         print('found')
 
         # Remove examples from ambiguous dataset
-        dataset = loader.remove_examples_by_qid(dataset, ambiguous_vqa_dataset)
-
+        dataset = loader.isolate_examples_by_qid(dataset, ambiguous_vqa_dataset, remove=True)
         if verbose:
             print(dataset[0])
             image = Image.open(dataset[0]['image'].filename)
@@ -73,11 +72,13 @@ class ViltFinetuneDataLoader(object):
         annotation['scores'] = scores
         return example
 
-    def remove_examples_by_qid(self, from_dataset, remove_dataset):
+    def isolate_examples_by_qid(self, from_dataset, remove_dataset, remove):
         print(f"Removing {len(remove_dataset)} items from {from_dataset.builder_name}...")
         # matching_examples = from_dataset.filter(lambda example: example["question_id"] not in remove_dataset["Input.question_id"])
         q_ids_dict = {key: None for key in remove_dataset["Input.question_id"]}
-        matching_examples = from_dataset.filter(lambda example: example["question_id"] not in q_ids_dict)
-        
+        if remove:
+            matching_examples = from_dataset.filter(lambda example: example["question_id"] not in q_ids_dict)
+        else:
+            matching_examples = from_dataset.filter(lambda example: example["question_id"] in q_ids_dict)
         print(f'Dataset now of size: {len(matching_examples)}')
         return matching_examples
