@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 
 saved_dataset_dir = 'saved_datasets/'
-saved_model_dir = 'saved_models/'
+saved_model_dir = 'saved_models/run_1/epoch_9'
 
 if torch.cuda.is_available():
     device = torch.device('cuda')

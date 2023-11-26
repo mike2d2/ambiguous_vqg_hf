@@ -10,7 +10,7 @@ class ViltFinetuneDataLoader(object):
         pass
 
     @staticmethod
-    def from_saved_or_load(split='train',config=None, verbose=False, force_reload=False, save_dir='saved_datasets/', truncate_len=None):
+    def from_saved_or_load(split='train',config=None, verbose=False, force_reload=False, save_dir='saved_datasets/', truncate_len=None, remove=True):
         print(f"Split is {split}")
         if not force_reload:
             if os.path.exists(save_dir):
@@ -31,7 +31,8 @@ class ViltFinetuneDataLoader(object):
         # load ambiguity dataset
         # jsonObj = pd.read_json(path_or_buf=file_path, lines=True)
         ambiguous_vqa_dataset = load_dataset('json', data_files=f'datasets/combined_dev_test_from_dataset.json', split='train')
-        
+        # ambiguous_vqa_dataset = load_dataset('json', data_files=f'datasets/test_set.json', split='train')
+
         # find first example
         # q_id_check = ambiguous_vqa_dataset[0]['Input.question_id']
         # for q in tqdm(dataset):
@@ -39,7 +40,7 @@ class ViltFinetuneDataLoader(object):
         #         print('found')
 
         # Remove examples from ambiguous dataset
-        dataset = loader.isolate_examples_by_qid(dataset, ambiguous_vqa_dataset, remove=True)
+        dataset = loader.isolate_examples_by_qid(dataset, ambiguous_vqa_dataset, remove=remove)
         if verbose:
             print(dataset[0])
             image = Image.open(dataset[0]['image'].filename)
@@ -49,7 +50,8 @@ class ViltFinetuneDataLoader(object):
         dataset.save_to_disk(save_dir)
         return dataset
     
-    # vocab selection found here: https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/ViLT/Using_ViLT_for_image_text_retrieval.ipynb#scrollTo=4qC5r7ZEUAcr
+    # vocab selection found here: https://colab.research.google.com/github/NielsRogge/Transformers-Tutorials/blob/master/ViLT/Fine_tuning_ViLT_for_VQA.ipynb#scrollTo=qG0UzoCfgpEF
+
     def get_score(self, count: int) -> float:
         return min(1.0, count / 3)
 

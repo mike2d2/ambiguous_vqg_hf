@@ -19,7 +19,7 @@ import random
 from utils import get_nps
 random.seed(101)
 
-model_path = './checkpoints/1.pt'
+model_path = './checkpoints/real2-4.pt'
 saved_dataset_dir = 'saved_dataset_val/'
 add_disjunctive_constraints=True
 
