@@ -4,6 +4,7 @@ import os
 import numpy as np
 import pandas as pd    
 from torch.utils.data import DataLoader
+from torch.nn.parallel import DataParallel
 from data.vilt_finetune_data_loader import ViltFinetuneDataLoader
 from data.vqa_dataset import VQADataset
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering, DefaultDataCollator
@@ -39,6 +40,8 @@ model = ViltForQuestionAnswering.from_pretrained("dandelin/vilt-b32-mlm",
                                                  id2label=config.id2label,
                                                  label2id=config.label2id)
 
+device_ids = [0, 1]
+model = DataParallel(model, device_ids=device_ids)
 model.to(device)
 
 # combines features into concatenations
@@ -102,7 +105,7 @@ for epoch in range(50):
 
             # forward + backward + optimize
             outputs = model(**batch)
-            loss = outputs.loss
+            loss = outputs.loss.mean()
 
             if verbose:
                 print("Loss:", loss.item())

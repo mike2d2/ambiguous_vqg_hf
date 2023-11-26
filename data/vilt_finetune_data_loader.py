@@ -75,7 +75,9 @@ class ViltFinetuneDataLoader(object):
 
     def remove_examples_by_qid(self, from_dataset, remove_dataset):
         print(f"Removing {len(remove_dataset)} items from {from_dataset.builder_name}...")
-        matching_examples = from_dataset.filter(lambda example: example["question_id"] not in remove_dataset["Input.question_id"])
+        # matching_examples = from_dataset.filter(lambda example: example["question_id"] not in remove_dataset["Input.question_id"])
+        q_ids_dict = {key: None for key in remove_dataset["Input.question_id"]}
+        matching_examples = from_dataset.filter(lambda example: example["question_id"] not in q_ids_dict)
         
         print(f'Dataset now of size: {len(matching_examples)}')
         return matching_examples
