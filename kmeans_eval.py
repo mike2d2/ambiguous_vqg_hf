@@ -119,10 +119,10 @@ for example in dataset:
 
 # We load in the model this way because we added the generate fucntion
 model = VT5Kmeans()
-# checkpoint = torch.load(model_path)
-# if isinstance(checkpoint, nn.DataParallel):
-#     checkpoint = checkpoint.module
-# model.load_state_dict(checkpoint.state_dict())
+checkpoint = torch.load(model_path)
+if isinstance(checkpoint, nn.DataParallel):
+    checkpoint = checkpoint.module
+model.load_state_dict(checkpoint.state_dict())
 
 model.to(device)
 model.eval()
