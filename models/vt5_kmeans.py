@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-class VT5(nn.Module):
+class VT5Kmeans(nn.Module):
     def __init__(self, vilt_chkpt = None, freeze_vlm = True):
         super().__init__()
 
@@ -59,12 +59,14 @@ class VT5(nn.Module):
 
         return {'loss':loss, 'logits':logits, 'text':text}
     
-    def generate(self, images, answers, force_toks):
+    def generate(self, images, answers, force_toks=None):
         device = self.vilt_model.device
         x = self.vilt_processor(images=images, text=answers, padding='max_length', return_tensors='pt') 
         x = {k:v.to(device) for k,v in x.items()}
         x = self.vilt_model(**x).last_hidden_state
         
+        vilt_out_hidden = torch.mean(x, dim=1)
+
         # Project outputs into right dimension
         x = self.embedding_proj(x)
 
@@ -124,15 +126,17 @@ class VT5(nn.Module):
                                                 num_beams=self.beam_size, 
                                                 output_hidden_states=True,
                                                 return_dict_in_generate=True)
+            
+            t5_out_hidden = torch.mean(pred_dict['encoder_hidden_states'][-1], dim=1)
             pred_toks = pred_dict['sequences']
 
         text = self.t5_processor.batch_decode(pred_toks, skip_special_tokens=True)
-        return {'tokens':pred_toks, 'text':text}
+        return {'tokens':pred_toks, 'text':text, 'vilt_out_hidden': vilt_out_hidden, 't5_out_hidden': t5_out_hidden}
 
 
 if __name__ == '__main__':
-    device = torch.device(0)
-    model = VT5().to(device)
+    device = 'cpu'
+    model = VT5Kmeans().to(device)
 
     url = "http://images.cocodataset.org/val2017/000000039769.jpg"
     image = Image.open(requests.get(url, stream=True).raw)
