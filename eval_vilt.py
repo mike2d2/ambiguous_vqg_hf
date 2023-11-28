@@ -94,10 +94,3 @@ with torch.no_grad():
 
 accuracy = correct / len(dataset)
 
-
-
-
-
-
-
-

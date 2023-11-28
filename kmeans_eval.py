@@ -190,7 +190,7 @@ def get_prediction_clusters(questions, annotations, qid_to_vectors, cluster_meth
             # path = pathlib.Path(save_dir).joinpath(f"{image_id}_{qid}_{i}_0.pt")
             # vector = torch.load(path, map_location=torch.device('cpu')).detach().numpy()
             if qid in qid_to_vectors:
-                vector = qid_to_vectors[qid][int(i)].detach().numpy()
+                vector = qid_to_vectors[qid][int(i)].cpu().detach().numpy()
                 answer = ann['answers'][0]['answer']
                 answer_id = ann['answers'][0]['mturk_id']
                 vectors_by_qid[qid].append((vector, int(i)))
@@ -298,7 +298,10 @@ ps = []
 
 for dataset in answers_for_qid:
     # loop through each list of answers and grab all output vectors, and run kmeans on them
-    qid = dataset[0]['qid']
+    if len(dataset)>0:
+        qid = dataset[0]['qid']
+    else:
+        continue
     dataset = KmeansDataset(dataset)
 
     train_dataloader = DataLoader(dataset,batch_size=1, collate_fn = collate_fn, shuffle=True)
@@ -354,9 +357,9 @@ for dataset in answers_for_qid:
     ps.append(p_pred_to_ann)
     rs.append(r_pred_to_ann)
 
-print('avg f1: ', sum(f1s)/len(f1s))
-print('avg p: ', sum(ps)/len(ps))
-print('avg r: ', sum(rs)/len(rs))
+    print('avg f1: ', sum(f1s)/len(f1s))
+    print('avg p: ', sum(ps)/len(ps))
+    print('avg r: ', sum(rs)/len(rs))
 
 
 

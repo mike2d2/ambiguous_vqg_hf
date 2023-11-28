@@ -110,7 +110,7 @@ for epoch in range(50):
 
             # forward + backward + optimize
             outputs = model(**batch)
-            loss = outputs.loss
+            loss = outputs.loss.mean()
 
             if verbose:
                 print("Loss:", loss.item())
