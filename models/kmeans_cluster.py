@@ -38,6 +38,8 @@ class KMeansCluster:
             # if you hit zero inertia, no sense in going further 
             if kmeans.inertia_ < 1e-16:
                 break
+        if len(scores_data) == 0:
+            return
 
         score_array = np.array(scores_data)
         min_row = np.argmin(score_array[:,0])
