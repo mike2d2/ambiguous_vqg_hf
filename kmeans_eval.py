@@ -1,6 +1,7 @@
 from collections import defaultdict
 import json
 import torch
+import pdb
 from tqdm import tqdm
 from transformers import ViltConfig, ViltProcessor, ViltForQuestionAnswering
 from data.kmeans_dataset import KmeansDataset
@@ -161,6 +162,8 @@ def cluster_vectors(vectors, cluster_method='optics', do_pca=False, pca_comp_max
         #     raise AssertionError("Unknown cluster method")
         clust.fit(vectors)
         clusters = defaultdict(list)
+        if clust.labels_ is None:
+            pdb.set_trace()
         max_label = max(clust.labels_) + 1
         for i, vidx in enumerate(vidxs):
             label = clust.labels_[i]
@@ -340,7 +343,7 @@ for dataset in answers_for_qid:
     pred_clusters = get_prediction_clusters(test_questions, 
                                     test_annotations, 
                                     # str(checkpoint_dir), 
-                                    qid_to_vectors=qid_to_vilt_hidden_vec,
+                                    qid_to_vectors=qid_to_t5_hidden_vec,
                                     cluster_method='kmeans', 
                                     do_pca=True,
                                     pca_comp_max=5,
@@ -356,12 +359,21 @@ for dataset in answers_for_qid:
     f1s.append(f1_pred_to_ann)
     ps.append(p_pred_to_ann)
     rs.append(r_pred_to_ann)
-
+    avg_f1 = sum(f1s)/len(f1s)
+    avg_p = sum(ps)/len(ps)
+    avg_r = sum(rs)/len(rs)
     print('avg f1: ', sum(f1s)/len(f1s))
     print('avg p: ', sum(ps)/len(ps))
     print('avg r: ', sum(rs)/len(rs))
 
-
+    py_dict = {
+        "avg_f1" : avg_f1,
+        "avg_p" : avg_p,
+        "avg_r" : avg_r, 
+    }
+     
+    with open('cluster_scores.json', 'w') as json_file:
+      json.dump(py_dict, json_file)
 
 
 
