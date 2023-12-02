@@ -134,7 +134,7 @@ def collate_fn(x):
     answers = [item[2] for item in x]
     return images, questions, answers
 
-def cluster_vectors(vectors, cluster_method='optics', do_pca=False, pca_comp_max=2, pred_data = None):
+def cluster_vectors(vectors, cluster_method='optics', do_pca=True, pca_comp_max=2, pred_data = None):
     if pred_data is None: 
         vidxs = [x[1] for x in vectors]
         vectors = np.vstack([x[0] for x in vectors]).reshape(len(vectors), -1)
@@ -206,10 +206,11 @@ def get_prediction_clusters(questions, annotations, qid_to_vectors, cluster_meth
         # pdb.set_trace()
         # pred_data_at_qid = [x for x in pred_data if x['question_id'].split("_")[0] == qid]
         # pdb.set_trace() 
-        clusters = cluster_vectors(vectors, cluster_method=cluster_method, do_pca=do_pca, pca_comp_max=pca_comp_max) #, pred_data = pred_data_at_qid)
+        if vectors:
+            clusters = cluster_vectors(vectors, cluster_method=cluster_method, do_pca=do_pca, pca_comp_max=pca_comp_max) #, pred_data = pred_data_at_qid)
 
-        clusters = {k: [answers_by_qid[qid][idx] for idx in v ] for k, v in clusters.items()}
-        clusters_by_qid[qid] = clusters
+            clusters = {k: [answers_by_qid[qid][idx] for idx in v ] for k, v in clusters.items()}
+            clusters_by_qid[qid] = clusters
 
     return clusters_by_qid
 
@@ -285,6 +286,7 @@ def get_scores(clusters_by_qid_a, clusters_by_qid_b):
         cluster_lens_a.append(len(cluster_a))
         cluster_lens_b.append(len(cluster_b))
     return np.mean(f1_scores), np.mean(p_scores), np.mean(r_scores), np.mean(cluster_lens_a), np.mean(cluster_lens_b)
+    # Write to File
 
 
 ############ START EVAL ###############

@@ -4,7 +4,7 @@ from sklearn.cluster import KMeans
 
 class KMeansCluster:
     def __init__(self, penalty_factor=3.0):
-        self.kmeans_wrapper_dict = {k: KMeans(n_clusters=k, random_state=12) for k in range(0, 10)}
+        self.kmeans_wrapper_dict = {k: KMeans(n_init='auto', n_clusters=k, random_state=12) for k in range(0, 10)}
         self.penalty_factor = penalty_factor
         self.labels_ = None
 
