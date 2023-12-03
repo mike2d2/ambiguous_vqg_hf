@@ -68,7 +68,6 @@ class VT5Kmeans(nn.Module):
         
         vilt_out_hidden = torch.mean(x, dim=1)
         # vilt_out_hidden = torch.mean(out.logits, dim=1)
-
         # Project outputs into right dimension
         x = self.embedding_proj(x)
 

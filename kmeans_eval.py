@@ -123,10 +123,10 @@ for example in dataset:
 
 # We load in the model this way because we added the generate fucntion
 model = VT5Kmeans()
-# checkpoint = torch.load(model_path)
-# if isinstance(checkpoint, nn.DataParallel):
-#     checkpoint = checkpoint.module
-# model.load_state_dict(checkpoint.state_dict())
+checkpoint = torch.load(model_path)
+if isinstance(checkpoint, nn.DataParallel):
+    checkpoint = checkpoint.module
+model.load_state_dict(checkpoint.state_dict(), strict=False)
 
 model.to(device)
 model.eval()
@@ -137,7 +137,7 @@ def collate_fn(x):
     answers = [item[2] for item in x]
     return images, questions, answers
 
-def cluster_vectors(vectors, cluster_method='optics', do_pca=False, pca_comp_max=2, pred_data = None):
+def cluster_vectors(vectors, cluster_method='optics', do_pca=True, pca_comp_max=2, pred_data = None):
     if pred_data is None: 
         vidxs = [x[1] for x in vectors]
         vectors = np.vstack([x[0] for x in vectors]).reshape(len(vectors), -1)
@@ -291,6 +291,7 @@ def get_scores(clusters_by_qid_a, clusters_by_qid_b):
         cluster_lens_a.append(len(cluster_a))
         cluster_lens_b.append(len(cluster_b))
     return np.mean(f1_scores), np.mean(p_scores), np.mean(r_scores), np.mean(cluster_lens_a), np.mean(cluster_lens_b)
+    # Write to File
 
 
 ############ START EVAL ###############
