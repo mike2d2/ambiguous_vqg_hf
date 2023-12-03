@@ -245,8 +245,7 @@ def f1_helper(group1, group2):
     precision = safe_divide(tp, tp+fp)
     recall = safe_divide(tp, tp + fn)
     f1 = safe_divide(2 * precision * recall, precision + recall)
-    if f1 > 0.99:
-        x = 2
+
     return precision, recall, f1
 
 def f1_score(groups1, groups2):
