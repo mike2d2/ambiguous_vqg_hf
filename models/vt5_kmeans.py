@@ -63,9 +63,11 @@ class VT5Kmeans(nn.Module):
         device = self.vilt_model.device
         x = self.vilt_processor(images=images, text=answers, padding='max_length', return_tensors='pt') 
         x = {k:v.to(device) for k,v in x.items()}
-        x = self.vilt_model(**x).last_hidden_state
+        out = self.vilt_model(**x)
+        x = out.last_hidden_state
         
         vilt_out_hidden = torch.mean(x, dim=1)
+        # vilt_out_hidden = torch.mean(out.logits, dim=1)
 
         # Project outputs into right dimension
         x = self.embedding_proj(x)

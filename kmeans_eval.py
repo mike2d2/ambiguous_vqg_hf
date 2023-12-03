@@ -96,6 +96,7 @@ for example in dataset:
     if qid in ann_clusters:
         for cluster_dict in ann_clusters[qid].values():
             for ans_dict in cluster_dict:
+
                 answers.append(ans_dict["answer"])
 
     # Create a new dataset with answers for the current question ID
@@ -108,6 +109,8 @@ for example in dataset:
         })
     
     answers_for_qid.append(answers_dataset)
+    if len(answers_dataset) == 2:
+        x = 1
 
 # 'answers_for_qid' will contain a list of datasets, each dataset containing answers for a specific question ID
 
@@ -203,10 +206,12 @@ def get_prediction_clusters(questions, annotations, qid_to_vectors, cluster_meth
         # pdb.set_trace()
         # pred_data_at_qid = [x for x in pred_data if x['question_id'].split("_")[0] == qid]
         # pdb.set_trace() 
-        clusters = cluster_vectors(vectors, cluster_method=cluster_method, do_pca=do_pca, pca_comp_max=pca_comp_max) #, pred_data = pred_data_at_qid)
+        if len(vectors) > 2:
+            clusters = cluster_vectors(vectors, cluster_method=cluster_method, do_pca=do_pca, pca_comp_max=pca_comp_max) #, pred_data = pred_data_at_qid)
 
-        clusters = {k: [answers_by_qid[qid][idx] for idx in v ] for k, v in clusters.items()}
-        clusters_by_qid[qid] = clusters
+            clusters = {k: [answers_by_qid[qid][idx] for idx in v ] for k, v in clusters.items()}
+            #clusters = {k: [{'answer': answers_by_qid[qid][idx]['answer'], 'id':idx} for idx in v ] for k, v in clusters.items()}
+            clusters_by_qid[qid] = clusters
 
     return clusters_by_qid
 
@@ -237,6 +242,8 @@ def f1_helper(group1, group2):
     precision = safe_divide(tp, tp+fp)
     recall = safe_divide(tp, tp + fn)
     f1 = safe_divide(2 * precision * recall, precision + recall)
+    if f1 > 0.99:
+        x = 2
     return precision, recall, f1
 
 def f1_score(groups1, groups2):
