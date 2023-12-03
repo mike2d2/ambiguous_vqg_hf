@@ -4,3 +4,7 @@ torchaudio==2.0.2
 transformers
 datasets
 Pillow
+
+scikit-learn
+nltk
+spacy
