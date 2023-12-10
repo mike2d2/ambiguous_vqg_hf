@@ -16,10 +16,11 @@ import wandb
 import torch.nn as nn
 
 enable_wandb = True
-checkpoint = 'checkpoints/0.pt'
+checkpoint = 'checkpoints/real2-5.pt'
+start_epoch=3
 if enable_wandb:
     wandb.login()
-    run_name = 'real1'
+    run_name = 'real2'
     wandb.init(project = 'vqg', name = run_name)
 
 saved_dataset_dir = 'saved_datasets/'
@@ -63,7 +64,7 @@ train_dataloader = DataLoader(dataset,batch_size=80, collate_fn = collate_fn, sh
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 
 model.train()
-for epoch in range(50): 
+for epoch in range(start_epoch,50): 
     print(f"Epoch: {epoch}")
     for images, questions, answers in tqdm(train_dataloader):
             # zero the parameter gradients
@@ -80,9 +81,4 @@ for epoch in range(50):
             metrics = {'train_ce': loss.item()}
             if enable_wandb:
                 wandb.log(metrics)
-    # TODO: Compute bleu on dev set
-    weights = [(1, 0, 0, 0),
-                (1./2., 1./2., 0, 0),
-                (1./3., 1./3., 1./3., 0),
-                (1./4., 1./4., 1./4., 1./4.)]
     torch.save(model,f'checkpoints/{run_name}-{epoch}.pt')

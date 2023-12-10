@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 
 
 saved_dataset_dir = 'saved_datasets/'
-saved_model_dir = 'saved_models/run_1/epoch_9'
+saved_model_dir = 'saved_models/'
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -93,4 +93,11 @@ with torch.no_grad():
         correct += (predicted == label_ids).sum().item()
 
 accuracy = correct / len(dataset)
+
+
+
+
+
+
+
 

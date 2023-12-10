@@ -25,7 +25,7 @@ class VT5(nn.Module):
         self.t5_model = T5ForConditionalGeneration.from_pretrained(t5_hf_path)
         self.t5_processor = T5TokenizerFast.from_pretrained(t5_hf_path)
         self.embedding_proj = nn.Linear(self.vilt_model.config.hidden_size, self.t5_model.config.d_model)
-
+        
         # Freeze vilt
         if freeze_vlm:
             for param in self.vilt_model.parameters():
@@ -64,7 +64,7 @@ class VT5(nn.Module):
         x = self.vilt_processor(images=images, text=answers, padding='max_length', return_tensors='pt') 
         x = {k:v.to(device) for k,v in x.items()}
         x = self.vilt_model(**x).last_hidden_state
-        
+
         # Project outputs into right dimension
         x = self.embedding_proj(x)
 
