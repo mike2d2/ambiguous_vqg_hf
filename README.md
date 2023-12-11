@@ -48,4 +48,4 @@ which will run the test examples through the model, extract the data and then pe
 
 # Pretrained model
 
-We have uploaded weights for a pretrained VQG model which can be found [here](https://drive.google.com/file/d/1NWnVXvx12M4rAhU8MVhiLPurqkOKd_G8/view?usp=drive_link) on google drive by downloading the file real2-4.pt and placing in checkpoints/ directory, which must be created for the eval code to work properly.
+We have uploaded weights for a pretrained VQG model which can be found [here](https://drive.google.com/file/d/1NWnVXvx12M4rAhU8MVhiLPurqkOKd_G8/view?usp=drive_link) on google drive by downloading the file real2-4.pt and placing in checkpoints/ directory, which must be created for the eval code to run from the checkpoint.
