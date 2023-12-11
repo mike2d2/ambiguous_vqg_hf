@@ -6,6 +6,10 @@ Clone the repo, create an environment with conda or venv and run
 
 ```pip install -r requirements.txt```
 
+also need to install spacy library
+
+```python -m spacy download en_core_web_sm```
+
 # Preprocessing
 
 Data preprocessing happens automatically when training is run. Data downloads are handled by huggingface. Data preprocessing is performed in data/vilt_finetune_data_loader.py. Filtering the dataset to remove examples from the authors test dataset is also performed here and may take some time.
@@ -45,5 +49,3 @@ which will run the test examples through the model, extract the data and then pe
 We have uploaded weights for a pretrained VQG model which can be found on google drive by downloading the file real2-4.pt and placing in checkpoints/ directory, which must be created for the eval code to run:
 
 ```https://drive.google.com/file/d/1NWnVXvx12M4rAhU8MVhiLPurqkOKd_G8/view?usp=drive_link```
-
-Default evaluation checkpoint can be found 

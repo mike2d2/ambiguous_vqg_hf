@@ -11,4 +11,3 @@ spacy
 wandb
 argparse
 rouge
-cider
