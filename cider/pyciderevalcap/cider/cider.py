@@ -11,7 +11,8 @@
 # Tsung-Yi Lin <tl483@cornell.edu>
 
 import sys
-sys.path.append('/home1/dyang165/scratch1/ambiguous_vqg_hf/cider/pyciderevalcap/cider''')
+# sys.path.append('/home1/dyang165/scratch1/ambiguous_vqg_hf/cider/pyciderevalcap/cider''')
+sys.path.append('./cider/pyciderevalcap/cider''')
 
 from cider_scorer import CiderScorer
 

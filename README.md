@@ -18,7 +18,7 @@ To train the ViLT model run
 
 The dataset setup will pull the VQAv2 from huggingface and other models, this may take a while. Also "verbose" on line 21 can be set to True to see some output examples of VQA. 
 
-To train the full VQG model with VT5 and frozen ViLT run.
+To train the full VQG model with VT5 and frozen ViLT run
 
 ```python train_vt5.py```
 
