@@ -1,5 +1,6 @@
 from collections import defaultdict
 import json
+import pathlib
 import torch
 import pdb
 from tqdm import tqdm
@@ -123,10 +124,10 @@ for example in dataset:
 
 # We load in the model this way because we added the generate fucntion
 model = VT5Kmeans()
-checkpoint = torch.load(model_path)
-if isinstance(checkpoint, nn.DataParallel):
-    checkpoint = checkpoint.module
-model.load_state_dict(checkpoint.state_dict(), strict=False)
+# checkpoint = torch.load(model_path)
+# if isinstance(checkpoint, nn.DataParallel):
+#     checkpoint = checkpoint.module
+# model.load_state_dict(checkpoint.state_dict(), strict=False)
 
 model.to(device)
 model.eval()
@@ -179,7 +180,7 @@ def cluster_vectors(vectors, cluster_method='optics', do_pca=True, pca_comp_max=
     return clusters 
 
 # get the clusters from predictions 
-def get_prediction_clusters(questions, annotations, qid_to_vectors, cluster_method='optics', do_pca=False, pca_comp_max=2, pred_data=None):
+def get_prediction_clusters(questions, annotations, qid_to_vectors, cluster_method='kmeans', do_pca=False, pca_comp_max=2, pred_data=None):
     anns_by_qid = defaultdict(list)
     for quest, ann in zip(questions, annotations):
         qid, i = quest['question_id'].split("_")
@@ -351,6 +352,7 @@ for dataset in answers_for_qid:
                                     test_annotations, 
                                     # str(checkpoint_dir), 
                                     qid_to_vectors=qid_to_t5_hidden_vec,
+                                    # qid_to_vectors=qid_to_vilt_hidden_vec,
                                     cluster_method='kmeans', 
                                     do_pca=True,
                                     pca_comp_max=5,

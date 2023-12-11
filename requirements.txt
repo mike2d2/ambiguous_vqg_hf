@@ -8,3 +8,7 @@ Pillow
 scikit-learn
 nltk
 spacy
+wandb
+argparse
+rouge
+cider
