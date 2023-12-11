@@ -38,7 +38,7 @@ Evaluating the VT5 model can be performed by running
 
 ```python eval_vt5.py```
 
-The evaluation uses CIDE-r scores from a forked version of their repo found [here](doc:https://github.com/vrama91/cider/tree/master)
+The evaluation uses CIDE-r scores from a forked version of their repo found [here](https://github.com/vrama91/cider/tree/master)
 
 Kmeans clustering can be performed on the test dataset by running
 
@@ -48,4 +48,4 @@ which will run the test examples through the model, extract the data and then pe
 
 # Pretrained model
 
-We have uploaded weights for a pretrained VQG model which can be found [here](doc:https://drive.google.com/file/d/1NWnVXvx12M4rAhU8MVhiLPurqkOKd_G8/view?usp=drive_link) on google drive by downloading the file real2-4.pt and placing in checkpoints/ directory, which must be created for the eval code to work properly.
+We have uploaded weights for a pretrained VQG model which can be found [here](https://drive.google.com/file/d/1NWnVXvx12M4rAhU8MVhiLPurqkOKd_G8/view?usp=drive_link) on google drive by downloading the file real2-4.pt and placing in checkpoints/ directory, which must be created for the eval code to work properly.
