@@ -1,5 +1,14 @@
 # ambiguous_vqg_hf
 
+# Original Paper
+
+[Why Did the Chicken Cross the Road? Rephrasing and Analyzing Ambiguous Questions in VQA](https://aclanthology.org/2023.acl-long.569/)
+
+# Reproduction Paper
+
+[For What Reason did the Poultry Cross the Street? Reproducing Deep
+Ambiguous Question Rephrasing for Visual Question Answering](https://drive.google.com/file/d/1zYDNARvVwKBDLqhSr_ITmiF12McLXW9W/view?usp=sharing)
+
 # Installation
 
 Clone the repo, create an environment with conda or venv and run
